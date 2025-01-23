@@ -1,4 +1,3 @@
-import React from 'react'
 import ChatInterface from './components/ChatInterface'
 
 // Our main App component that wraps the chat interface
