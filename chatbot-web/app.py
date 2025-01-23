@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
+import httpx
 import os
 from dotenv import load_dotenv
 import logging
@@ -21,12 +22,18 @@ CORS(app, resources={r"/api/*": {
     "allow_headers": ["Content-Type"]
 }})
 
-# Initialize the OpenAI client - using a simpler configuration
+# Create a custom HTTP client first
+http_client = httpx.Client(
+    base_url="https://api.deepseek.com/v1",
+    headers={"Content-Type": "application/json"},
+    timeout=60.0
+)
+
+# Initialize the OpenAI client with our custom HTTP client
 try:
     client = OpenAI(
         api_key=os.getenv('DEEPSEEK_API_KEY'),
-        base_url="https://api.deepseek.com/v1",
-        default_headers={"Content-Type": "application/json"}
+        http_client=http_client
     )
     logger.info("OpenAI client initialized successfully")
 except Exception as e:
@@ -59,13 +66,20 @@ def chat():
         return jsonify({'response': response})
 
     except Exception as e:
-        logger.error(f"Error in chat endpoint: {str(e)}")
-        return jsonify({'error': f"An error occurred: {str(e)}"}), 500
+        error_message = str(e)
+        logger.error(f"Error in chat endpoint: {error_message}")
+        return jsonify({'error': f"An error occurred: {error_message}"}), 500
 
 # Health check endpoint
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'healthy'}), 200
+
+# Cleanup handler
+@app.teardown_appcontext
+def cleanup(exception=None):
+    if http_client:
+        http_client.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
