@@ -3,6 +3,7 @@ from flask_cors import CORS
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+import httpx
 
 # Load environment variables
 load_dotenv()
@@ -14,7 +15,7 @@ CORS(app, resources={r"/api/*": {"origins": ["https://craigdoesdata-chatbot.netl
 # Initialize the OpenAI client with Deepseek base URL
 client = OpenAI(
     api_key=os.getenv('DEEPSEEK_API_KEY'),
-    base_url="https://api.deepseek.com"
+    base_url="https://api.deepseek.com/v1"  # Updated with /v1 endpoint
 )
 
 @app.route('/api/chat', methods=['POST'])
@@ -42,6 +43,7 @@ def chat():
         return jsonify({'response': response})
 
     except Exception as e:
+        print(f"Error details: {str(e)}")  # Added detailed error logging
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
