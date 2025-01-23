@@ -1,19 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// This configuration tells Vite how to build and serve our application
+// https://vitejs.dev/config/
 export default defineConfig({
-  // Enable React integration
   plugins: [react()],
-  // Configure the development server
-  server: {
-    port: 3000,
-    // Allow our React app to make requests to our Flask backend
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true
-      }
-    }
-  }
+  base: '/chatbot/', // This tells Vite that your app will be served from /chatbot/
+  build: {
+    outDir: 'dist', // The directory where built files will go
+    assetsDir: 'assets', // Where your static assets will go
+  },
 })
