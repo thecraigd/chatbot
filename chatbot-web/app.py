@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+# Configure CORS to allow requests from your Netlify domain
+CORS(app, resources={r"/api/*": {"origins": ["https://craigdoesdata-chatbot.netlify.app", "http://localhost:3000"], "methods": ["POST", "OPTIONS"], "allow_headers": ["Content-Type"]}})
 
 # Initialize the OpenAI client with Deepseek base URL
 client = OpenAI(
