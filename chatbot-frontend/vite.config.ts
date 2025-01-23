@@ -4,9 +4,10 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/chatbot/', // This tells Vite that your app will be served from /chatbot/
+  // We'll handle the base path differently
+  base: '/',
   build: {
-    outDir: 'dist', // The directory where built files will go
-    assetsDir: 'assets', // Where your static assets will go
+    outDir: 'dist',
+    assetsDir: 'assets',
   },
 })
